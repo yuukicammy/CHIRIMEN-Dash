@@ -73,7 +73,7 @@ const $ = __webpack_require__(2);
 
 http.createServer((req, res) => {
   console.log(req.headers);
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
   res.end('Hello World\n');
 }).listen(1337);
 
