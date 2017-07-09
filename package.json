@@ -1,18 +1,17 @@
 {
   "name": "CHIRIMEN",
   "version": "1.0.0",
-  "description": "CHIRIMEN sumple program",
   "main": "index.js",
-  "author": "lucciola",
+  "author": "clockvoid <hidenari_1@yahoo.co.jp>",
   "license": "MIT",
-  "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch"
-  },
-  "dependencies": {
+  "devDependencies": {
+    "babel": "^6.23.0",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
-    "http": "^0.0.0",
     "webpack": "^3.1.0"
+  },
+  "scripts": {
+    "hello": "echo 'hello'",
+    "build": "webpack"
   }
 }

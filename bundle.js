@@ -68,12 +68,14 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var http = __webpack_require__(1);
+const http = __webpack_require__(1);
 
 http.createServer((req, res) => {
-   res.writeHead(200, { 'Content-Type': 'text/plain' });
-   res.end("hello, hosomichi!");
-}).listen(1337, 'localhost');
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Hello World\n');
+}).listen(1337);
+
+console.log('Server running at http://localhost:1337/');
 
 /***/ }),
 /* 1 */
