@@ -13,5 +13,11 @@
   "scripts": {
     "hello": "echo 'hello'",
     "build": "webpack"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mongoose": "^4.11.1",
+    "request": "^2.81.0"
   }
 }
