@@ -1,8 +1,8 @@
 'use strict';
 
-const APIAI_ACCESS_TOKEN = 'api_ai_access_token';
-const FB_VERIFY_TOKEN = 'fb_verify_token';
-const FB_PAGE_ACCESS_TOKEN = 'fb_access_token';
+const APIAI_ACCESS_TOKEN = '507fa7521a514e4098d4e309f5f42502';
+const FB_VERIFY_TOKEN = 'chirimendash';
+const FB_PAGE_ACCESS_TOKEN = 'EAAE2R1A1sCEBAEnGM5GKOYAmHh3ZBqujSVlcOFnea5HgmNK5Cnn9zsTLiZChVb65IfPF75esx76iEER7K3reZCrU6mo1wvY4X7MVSXBmDppywepwTabXBlWTruJottRy64tvLUBnZCnMUCVbLyWmrPrHxOpJQayIRnfgu4F5CQZDZD';
 const APIAI_LANG = 'en';
 
 process.env['APIAI_ACCESS_TOKEN'] = APIAI_ACCESS_TOKEN;
@@ -13,7 +13,7 @@ process.env['APIAI_LANG'] = APIAI_LANG;
 const supertest = require('supertest');
 const should = require('should');
 const rewire = require('rewire');
-const app = rewire('../src/app');
+const app = rewire('facebook.jp');
 
 const server = supertest.agent('http://localhost:5000');
 
