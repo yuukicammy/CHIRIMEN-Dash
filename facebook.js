@@ -30,25 +30,25 @@ class FacebookBot {
                 .catch(err => console.error(err));
         } else {
             async.eachSeries(facebookResponseData, (facebookMessage, callback) => {
-                if (facebookMessage.sender_action) {
-                    console.log('Response as sender action');
-                    this.sendFBSenderAction(sender, facebookMessage.sender_action)
+		    if (facebookMessage.sender_action) {
+			console.log('Response as sender action');
+			this.sendFBSenderAction(sender, facebookMessage.sender_action)
                         .then(() => callback())
                         .catch(err => callback(err));
-                }
-                else {
-                    console.log('Response as formatted message');
-                    this.sendFBMessage(sender, facebookMessage)
+		    }
+		    else {
+			console.log('Response as formatted message');
+			this.sendFBMessage(sender, facebookMessage)
                         .then(() => callback())
                         .catch(err => callback(err));
-                }
-            }, (err) => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    console.log('Data response completed');
-                }
-            });
+		    }
+		}, (err) => {
+		    if (err) {
+			console.error(err);
+		    } else {
+			console.log('Data response completed');
+		    }
+		});
         }
     }
 
@@ -60,34 +60,34 @@ class FacebookBot {
 
             switch (message.type) {
                 //message.type 0 means text message
-                case 0:
-                    // speech: ["hi"]
-                    // we have to get value from fulfillment.speech, because of here is raw speech
-                    if (message.speech) {
+	    case 0:
+		// speech: ["hi"]
+		// we have to get value from fulfillment.speech, because of here is raw speech
+		if (message.speech) {
 
-                        let splittedText = this.splitResponse(message.speech);
+		    let splittedText = this.splitResponse(message.speech);
 
-                        splittedText.forEach(s => {
+		    splittedText.forEach(s => {
                             facebookMessages.push({text: s});
                         });
-                    }
+		}
 
-                    break;
+		break;
                 //message.type 1 means card message
-                case 1: {
-                    let carousel = [message];
+	    case 1: {
+		let carousel = [message];
 
-                    for (messageIndex++; messageIndex < messages.length; messageIndex++) {
-                        if (messages[messageIndex].type == 1) {
-                            carousel.push(messages[messageIndex]);
-                        } else {
-                            messageIndex--;
-                            break;
-                        }
-                    }
+		for (messageIndex++; messageIndex < messages.length; messageIndex++) {
+		    if (messages[messageIndex].type == 1) {
+			carousel.push(messages[messageIndex]);
+		    } else {
+			messageIndex--;
+			break;
+		    }
+		}
 
-                    let facebookMessage = {};
-                    carousel.forEach((c) => {
+		let facebookMessage = {};
+		carousel.forEach((c) => {
                         // buttons: [ {text: "hi", postback: "postback"} ], imageUrl: "", title: "", subtitle: ""
 
                         let card = {};
@@ -141,75 +141,75 @@ class FacebookBot {
                         facebookMessage.attachment.payload.elements.push(card);
                     });
 
-                    facebookMessages.push(facebookMessage);
-                }
+		facebookMessages.push(facebookMessage);
+	    }
 
-                    break;
+		break;
                 //message.type 2 means quick replies message
-                case 2: {
-                    if (message.replies && message.replies.length > 0) {
-                        let facebookMessage = {};
+	    case 2: {
+		if (message.replies && message.replies.length > 0) {
+		    let facebookMessage = {};
 
-                        facebookMessage.text = message.title ? message.title : 'Choose an item';
-                        facebookMessage.quick_replies = [];
+		    facebookMessage.text = message.title ? message.title : 'Choose an item';
+		    facebookMessage.quick_replies = [];
 
-                        message.replies.forEach((r) => {
+		    message.replies.forEach((r) => {
                             facebookMessage.quick_replies.push({
-                                content_type: "text",
-                                title: r,
-                                payload: r
-                            });
+				    content_type: "text",
+				    title: r,
+				    payload: r
+				});
                         });
 
-                        facebookMessages.push(facebookMessage);
-                    }
-                }
+		    facebookMessages.push(facebookMessage);
+		}
+	    }
 
-                    break;
+		break;
                 //message.type 3 means image message
-                case 3:
+	    case 3:
 
-                    if (message.imageUrl) {
-                        let facebookMessage = {};
+		if (message.imageUrl) {
+		    let facebookMessage = {};
 
-                        // "imageUrl": "http://example.com/image.jpg"
-                        facebookMessage.attachment = {type: "image"};
-                        facebookMessage.attachment.payload = {url: message.imageUrl};
+		    // "imageUrl": "http://example.com/image.jpg"
+		    facebookMessage.attachment = {type: "image"};
+		    facebookMessage.attachment.payload = {url: message.imageUrl};
 
-                        facebookMessages.push(facebookMessage);
-                    }
+		    facebookMessages.push(facebookMessage);
+		}
 
-                    break;
+		break;
                 //message.type 4 means custom payload message
-                case 4:
-                    if (message.payload && message.payload.facebook) {
-                        facebookMessages.push(message.payload.facebook);
-                    }
-                    break;
+	    case 4:
+		if (message.payload && message.payload.facebook) {
+		    facebookMessages.push(message.payload.facebook);
+		}
+		break;
 
-                default:
-                    break;
+	    default:
+		break;
             }
         }
 
         return new Promise((resolve, reject) => {
-            async.eachSeries(facebookMessages, (msg, callback) => {
-                    this.sendFBSenderAction(sender, "typing_on")
+		async.eachSeries(facebookMessages, (msg, callback) => {
+			this.sendFBSenderAction(sender, "typing_on")
                         .then(() => this.sleep(this.messagesDelay))
                         .then(() => this.sendFBMessage(sender, msg))
                         .then(() => callback())
                         .catch(callback);
-                },
-                (err) => {
-                    if (err) {
-                        console.error(err);
-                        reject(err);
-                    } else {
-                        console.log('Messages sent');
-                        resolve();
-                    }
-                });
-        });
+		    },
+		    (err) => {
+			if (err) {
+			    console.error(err);
+			    reject(err);
+			} else {
+			    console.log('Messages sent');
+			    resolve();
+			}
+		    });
+	    });
 
     }
 
@@ -220,10 +220,10 @@ class FacebookBot {
         let splittedText = this.splitResponse(responseText);
 
         async.eachSeries(splittedText, (textPart, callback) => {
-            this.sendFBMessage(sender, {text: textPart})
+		this.sendFBMessage(sender, {text: textPart})
                 .then(() => callback())
                 .catch(err => callback(err));
-        });
+	    });
     }
     //which webhook event
     getEventText(event) {
@@ -259,34 +259,34 @@ class FacebookBot {
             console.log("Text", text);
             //send user's text to api.ai service
             let apiaiRequest = this.apiAiService.textRequest(text,
-                {
-                    sessionId: this.sessionIds.get(sender),
-                    originalRequest: {
-                        data: event,
-                        source: "facebook"
-                    }
-                });
+							     {
+								 sessionId: this.sessionIds.get(sender),
+								 originalRequest: {
+								     data: event,
+								     source: "facebook"
+								 }
+							     });
             //get response from api.ai
             apiaiRequest.on('response', (response) => {
-                if (this.isDefined(response.result) && this.isDefined(response.result.fulfillment)) {
-                    let responseText = response.result.fulfillment.speech;
-                    let responseData = response.result.fulfillment.data;
-                    let responseMessages = response.result.fulfillment.messages;
+		    if (this.isDefined(response.result) && this.isDefined(response.result.fulfillment)) {
+			let responseText = response.result.fulfillment.speech;
+			let responseData = response.result.fulfillment.data;
+			let responseMessages = response.result.fulfillment.messages;
 
-                    let action = response.result.action;
+			let action = response.result.action;
 
-                    if (this.isDefined(responseData) && this.isDefined(responseData.facebook)) {
-                        let facebookResponseData = responseData.facebook;
-                        this.doDataResponse(sender, facebookResponseData);
-                    } else if (this.isDefined(responseMessages) && responseMessages.length > 0) {
-                        this.doRichContentResponse(sender, responseMessages);
-                    }
-                    else if (this.isDefined(responseText)) {
-                        this.doTextResponse(sender, responseText);
-                    }
+			if (this.isDefined(responseData) && this.isDefined(responseData.facebook)) {
+			    let facebookResponseData = responseData.facebook;
+			    this.doDataResponse(sender, facebookResponseData);
+			} else if (this.isDefined(responseMessages) && responseMessages.length > 0) {
+			    this.doRichContentResponse(sender, responseMessages);
+			}
+			else if (this.isDefined(responseText)) {
+			    this.doTextResponse(sender, responseText);
+			}
 
-                }
-            });
+		    }
+		});
 
             apiaiRequest.on('error', (error) => console.error(error));
             apiaiRequest.end();
@@ -323,7 +323,7 @@ class FacebookBot {
                     }
                     currReverse--;
                 } while (currReverse > prev)
-            }
+		    }
         }
         output.push(s.substr(prev));
         return output;
@@ -331,57 +331,57 @@ class FacebookBot {
 
     sendFBMessage(sender, messageData) {
         return new Promise((resolve, reject) => {
-            request({
-                url: 'https://graph.facebook.com/v2.6/me/messages',
-                qs: {access_token: FB_PAGE_ACCESS_TOKEN},
-                method: 'POST',
-                json: {
-                    recipient: {id: sender},
-                    message: messageData
-                }
-            }, (error, response) => {
-                if (error) {
-                    console.log('Error sending message: ', error);
-                    reject(error);
-                } else if (response.body.error) {
-                    console.log('Error: ', response.body.error);
-                    reject(new Error(response.body.error));
-                }
+		request({
+			url: 'https://graph.facebook.com/v2.6/me/messages',
+			qs: {access_token: FB_PAGE_ACCESS_TOKEN},
+			method: 'POST',
+			json: {
+			    recipient: {id: sender},
+			    message: messageData
+			}
+		    }, (error, response) => {
+			if (error) {
+			    console.log('Error sending message: ', error);
+			    reject(error);
+			} else if (response.body.error) {
+			    console.log('Error: ', response.body.error);
+			    reject(new Error(response.body.error));
+			}
 
-                resolve();
-            });
-        });
+			resolve();
+		    });
+	    });
     }
 
     sendFBSenderAction(sender, action) {
         return new Promise((resolve, reject) => {
-            request({
-                url: 'https://graph.facebook.com/v2.6/me/messages',
-                qs: {access_token: FB_PAGE_ACCESS_TOKEN},
-                method: 'POST',
-                json: {
-                    recipient: {id: sender},
-                    sender_action: action
-                }
-            }, (error, response) => {
-                if (error) {
-                    console.error('Error sending action: ', error);
-                    reject(error);
-                } else if (response.body.error) {
-                    console.error('Error: ', response.body.error);
-                    reject(new Error(response.body.error));
-                }
+		request({
+			url: 'https://graph.facebook.com/v2.6/me/messages',
+			qs: {access_token: FB_PAGE_ACCESS_TOKEN},
+			method: 'POST',
+			json: {
+			    recipient: {id: sender},
+			    sender_action: action
+			}
+		    }, (error, response) => {
+			if (error) {
+			    console.error('Error sending action: ', error);
+			    reject(error);
+			} else if (response.body.error) {
+			    console.error('Error: ', response.body.error);
+			    reject(new Error(response.body.error));
+			}
 
-                resolve();
-            });
-        });
+			resolve();
+		    });
+	    });
     }
 
     doSubscribeRequest() {
         request({
                 method: 'POST',
-                uri: "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=" + FB_PAGE_ACCESS_TOKEN
-            },
+		    uri: "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=" + FB_PAGE_ACCESS_TOKEN
+		    },
             (error, response, body) => {
                 if (error) {
                     console.error('Error while subscription: ', error);
@@ -405,8 +405,8 @@ class FacebookBot {
 
     sleep(delay) {
         return new Promise((resolve, reject) => {
-            setTimeout(() => resolve(), delay);
-        });
+		setTimeout(() => resolve(), delay);
+	    });
     }
 
 }
@@ -419,50 +419,50 @@ const app = express();
 app.use(bodyParser.text({type: 'application/json'}));
 
 app.get('/webhook/', (req, res) => {
-    if (req.query['hub.verify_token'] == FB_VERIFY_TOKEN) {
-        res.send(req.query['hub.challenge']);
+	if (req.query['hub.verify_token'] == FB_VERIFY_TOKEN) {
+	    res.send(req.query['hub.challenge']);
 
-        setTimeout(() => {
-            facebookBot.doSubscribeRequest();
-        }, 3000);
-    } else {
-        res.send('Error, wrong validation token');
-    }
-});
+	    setTimeout(() => {
+		    facebookBot.doSubscribeRequest();
+		}, 3000);
+	} else {
+	    res.send('Error, wrong validation token');
+	}
+    });
 
 app.post('/webhook/', (req, res) => {
-    try {
-        const data = JSONbig.parse(req.body);
+	try {
+	    const data = JSONbig.parse(req.body);
 
-        if (data.entry) {
-            let entries = data.entry;
-            entries.forEach((entry) => {
-                let messaging_events = entry.messaging;
-                if (messaging_events) {
-                    messaging_events.forEach((event) => {
-                        if (event.message && !event.message.is_echo ||
-                            event.postback && event.postback.payload) {
-                            facebookBot.processEvent(event);
-                        }
-                    });
-                }
-            });
-        }
+	    if (data.entry) {
+		let entries = data.entry;
+		entries.forEach((entry) => {
+			let messaging_events = entry.messaging;
+			if (messaging_events) {
+			    messaging_events.forEach((event) => {
+				    if (event.message && !event.message.is_echo ||
+					event.postback && event.postback.payload) {
+					facebookBot.processEvent(event);
+				    }
+				});
+			}
+		    });
+	    }
 
-        return res.status(200).json({
-            status: "ok"
-        });
-    } catch (err) {
-        return res.status(400).json({
-            status: "error",
-            error: err
-        });
-    }
+	    return res.status(200).json({
+		    status: "ok"
+		});
+	} catch (err) {
+	    return res.status(400).json({
+		    status: "error",
+		    error: err
+		});
+	}
 
-});
+    });
 
 app.listen(REST_PORT, () => {
-    console.log('Rest service ready on port ' + REST_PORT);
-});
+	console.log('Rest service ready on port ' + REST_PORT);
+    });
 
 facebookBot.doSubscribeRequest();
