@@ -1,6 +1,8 @@
 const http = require('http');
+const $ = require('jquery');
 
 http.createServer((req, res) => {
+  console.log(req.headers);
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('Hello World\n');
 }).listen(1337);

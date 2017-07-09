@@ -69,8 +69,10 @@ module.exports =
 /***/ (function(module, exports, __webpack_require__) {
 
 const http = __webpack_require__(1);
+const $ = __webpack_require__(2);
 
 http.createServer((req, res) => {
+  console.log(req.headers);
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Hello World\n');
 }).listen(1337);
@@ -82,6 +84,12 @@ console.log('Server running at http://localhost:1337/');
 /***/ (function(module, exports) {
 
 module.exports = require("http");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("jquery");
 
 /***/ })
 /******/ ]);
